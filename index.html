@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="Favicon.png">
+</head>
+<body>
+    <h1></h1>
+
+    <div id="cont" >
+        <div class="atmpt" id="row-1">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+        <div class="atmpt" id="row-2">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+        <div class="atmpt" id="row-3">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+        <div class="atmpt" id="row-4">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+        <div class="atmpt" id="row-5">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+        <div class="atmpt" id="row-6">
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+            <div class="letter"></div>
+        </div>
+    </div>
+
+    <div id="keys">
+        <div class="keyboard">
+            <div id="btn-q" onclick="addLetter('Q')">Q</div>
+            <div id="btn-w" onclick="addLetter('W')">W</div>
+            <div id="btn-e" onclick="addLetter('E')">E</div>
+            <div id="btn-r" onclick="addLetter('R')">R</div>
+            <div id="btn-t" onclick="addLetter('T')">T</div>
+            <div id="btn-y" onclick="addLetter('Y')">Y</div>
+            <div id="btn-u" onclick="addLetter('U')">U</div>
+            <div id="btn-i" onclick="addLetter('I')">I</div>
+            <div id="btn-o" onclick="addLetter('O')">O</div>
+            <div id="btn-p" onclick="addLetter('P')">P</div>
+        </div>
+        <div class="keyboard">
+            <div id="btn-a" onclick="addLetter('A')">A</div>
+            <div id="btn-s" onclick="addLetter('S')">S</div>
+            <div id="btn-d" onclick="addLetter('D')">D</div>
+            <div id="btn-f" onclick="addLetter('F')">F</div>
+            <div id="btn-g" onclick="addLetter('G')">G</div>
+            <div id="btn-h" onclick="addLetter('H')">H</div>
+            <div id="btn-j" onclick="addLetter('J')">J</div>
+            <div id="btn-k" onclick="addLetter('K')">K</div>
+            <div id="btn-l" onclick="addLetter('L')">L</div>
+        </div>
+        <div class="keyboard">
+            <div id="btn-enter" class="btn-special" onclick="btnSearch()">Enter</div>
+            <div id="btn-z" onclick="addLetter('Z')">Z</div>
+            <div id="btn-x" onclick="addLetter('X')">X</div>
+            <div id="btn-c" onclick="addLetter('C')">C</div>
+            <div id="btn-v" onclick="addLetter('V')">V</div>
+            <div id="btn-b" onclick="addLetter('B')">B</div>
+            <div id="btn-n" onclick="addLetter('N')">N</div>
+            <div id="btn-m" onclick="addLetter('M')">M</div>
+            <div id="btn-del" class="btn-special" onclick="delLetter()">DEL</div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
