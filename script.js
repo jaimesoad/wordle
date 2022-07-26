@@ -77,7 +77,7 @@ const revealAns = [
     { transform: "rotateX(0deg)" }
 ];
 const revealTime = {
-    duration: 600,
+    duration: 450,
     iterations: 1
 };
 const shake = [
@@ -141,7 +141,7 @@ function submitWord(tiles) {
         animating = true;
         for (let i = 0; i < 5; i++) {
             tiles[i].animate(revealAns, revealTime);
-            yield sleep(300);
+            yield sleep(225);
             element = document.getElementById(`btn-${currentWord[i].toLowerCase()}`);
             if (currentWord[i] == word[i]) {
                 // Letter in place.

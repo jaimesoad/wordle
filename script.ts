@@ -89,7 +89,7 @@ const revealAns = [
 ]
 
 const revealTime = {
-    duration: 600,
+    duration: 450,
     iterations: 1
 }
 
@@ -170,7 +170,7 @@ async function submitWord(tiles: HTMLCollection) {
 
     for(let i = 0; i < 5; i++) {
         tiles[i].animate(revealAns, revealTime)
-        await sleep(300)
+        await sleep(225)
 
         element = document.getElementById(`btn-${currentWord[i].toLowerCase()}`)
 
