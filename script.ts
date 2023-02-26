@@ -188,7 +188,7 @@ async function submitWord(tiles: HTMLCollection) {
         }
         tiles[i].setAttribute("style", `background: ${color}; border-color: ${color}`)
 
-        if(element.style.background === "" || element.style.background.split("").some(obj => obj == "rgb(232, 232, 35)") && color == "#2fb52f"){
+        if(element.style.background === "" || element.style.background == "rgb(232, 232, 35)" && color == "#2fb52f"){
             element.style.background = color
         }
     }
