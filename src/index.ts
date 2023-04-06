@@ -1,20 +1,17 @@
+import { boxPop, popTiming, shake, shakeTime, revealAns, revealTime } from "./utils/consts.js"
+import { getElementById, loadUsable, range, selectRandom } from "./utils/functions.js"
+
 let rowNumber   = 1
 let tileNumber  = 0
 let currentWord = ""
 let solved      = false
 let animating   = false
 let usedWords:  string[] = []
-let activeRow   = document.getElementById("row-1")
+let activeRow   = getElementById("row-1")
+let usable:     string[] = []
+let word        = ""
 
-/*const btnSearch = () => {
-    if(rowNumber <= 6 && tileNumber == 5 && !solved) {
-        let tiles = activeRow.children
-
-        submitWord(tiles)
-    }
-}*/
-
-const addLetter = (letter: string) => {
+function addLetter(letter: string) {
 
     if(solved || animating || tileNumber == 5) return
 
@@ -29,7 +26,7 @@ const addLetter = (letter: string) => {
     currentWord += letter
 }
 
-const delLetter = () => {
+function delLetter() {
 
     if(tileNumber <= 0) return
 
@@ -42,89 +39,21 @@ const delLetter = () => {
     currentWord = currentWord.slice(0, -1)
 }
 
-async function selectRandom() {
-    const url        = "data/usable.json"
-    const request    = new Request(url)
-    const response   = await fetch(request)
-    const usableJSON = await response.json()
-
-    const val: string = usableJSON[Math.floor(Math.random()*usableJSON.length)]
-
-    return val
-}
-
-function loadUsable() {
-    let usableJSON: string[] = []
-
-    fetch("data/dict.json")
-    .then(response => {
-        return response.json()
-    })
-    .then(jsonData => usableJSON.push(...jsonData))
-
-    return usableJSON
-}
-
-const usable = loadUsable()
-
-const randWord = selectRandom()
-
-let word = ""
-randWord.then(value => word = value)
-
-const boxPop = [
-    { transform: "scale(1)" },
-    { transform: "scale(1.2)" }
-]
-
-const popTiming = {
-    duration: 75,
-    iterations: 1
-}
-
-const revealAns = [
-    { transform: "rotateX(0deg)" },
-    { transform: "rotateX(90deg)" },
-    { transform: "rotateX(0deg)" }
-]
-
-const revealTime = {
-    duration: 450,
-    iterations: 1
-}
-
-const shake = [
-    { transform: "translateX(0)" },
-    { transform: "translateX(2px)" },
-    { transform: "translateX(-2px)" },
-    { transform: "translateX(0)" }
-
-]
-
-const shakeTime = {
-    duration: 100,
-    iterations: 3
-}
-
-addEventListener("keydown", (e) => {
+function onKeyPress(e: KeyboardEvent) {
     let tiles = activeRow.children
 
-    if(solved || animating){
+    if(solved || animating)
         return
         
-    } else if(e.key.length == 1 && e.key >= "a" && e.key <= "z") {
-
+    else if(e.key.length == 1 && e.key >= "a" && e.key <= "z")
         addLetter(e.key.toUpperCase())
 
-    }else if(e.key == "Backspace" && tileNumber > 0) {
+    else if (e.key == "Backspace" && tileNumber > 0)
         delLetter()
 
-
-    }else if(e.key == "Enter" && tileNumber == 5 && rowNumber <= 6 && !solved) {
-        submitWord(tiles).then(r => r)
-        
-    }
-})
+    else if (e.key == "Enter" && tileNumber == 5 && rowNumber <= 6 && !solved)
+        submitWord(tiles)
+}
 
 function worthy(selected: string[], word: string[], count: number, letter: string) {
     const writtenAmount  = selected.filter(x => x === letter).length
@@ -132,9 +61,7 @@ function worthy(selected: string[], word: string[], count: number, letter: strin
     let used: number     = 0
     let toBeUsed: number = 0
 
-    if(writtenAmount <= realAmount){
-        return true
-    }
+    if (writtenAmount <= realAmount) return true
 
     for(let i = 0; i < count; i++){
         if(selected[i] == letter){
@@ -168,11 +95,11 @@ async function submitWord(tiles: HTMLCollection) {
     tileNumber = 0
     animating = true
 
-    for(let i = 0; i < 5; i++) {
+    for(let i of range(0, 5)) {
         tiles[i].animate(revealAns, revealTime)
         await sleep(225)
 
-        element = document.getElementById(`btn-${currentWord[i].toLowerCase()}`)
+        element = getElementById(`btn-${currentWord[i].toLowerCase()}`)
 
         if(currentWord[i] == word[i]){
             // Letter in place.
@@ -196,10 +123,11 @@ async function submitWord(tiles: HTMLCollection) {
     if(currentWord == word) {
         solved = true
         alert("You won!")
+        return
     }
 
     if(rowNumber <= 6){
-        activeRow = document.getElementById(`row-${rowNumber}`)
+        activeRow = getElementById(`row-${rowNumber}`)
         usedWords.push(currentWord)
         currentWord = ""
 
@@ -208,3 +136,21 @@ async function submitWord(tiles: HTMLCollection) {
     }
     animating = false
 }
+
+async function main() {
+    usable = await loadUsable()
+    word = await selectRandom()
+
+    const btns = Array.from(document.getElementsByClassName("btn"))
+    const btnSrc = getElementById("btn-enter")
+    const btnDel = getElementById("btn-del")
+
+    btns.forEach(x => x.addEventListener("click", () => addLetter(x.innerHTML)))
+    btnSrc.addEventListener("click", () => submitWord(activeRow.children))
+    btnDel.addEventListener("click", () => delLetter())
+    
+    addEventListener("keydown", onKeyPress)
+}
+main()
+.then(() => console.log("initialized"))
+.catch(e => console.log(e))
