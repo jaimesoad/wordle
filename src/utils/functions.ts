@@ -39,3 +39,7 @@ export function getElementById(id: string) {
 
     return elem
 }
+
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

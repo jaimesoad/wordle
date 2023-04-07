@@ -1,5 +1,5 @@
 import { boxPop, popTiming, shake, shakeTime, revealAns, revealTime } from "./utils/consts.js"
-import { getElementById, loadUsable, range, selectRandom } from "./utils/functions.js"
+import { getElementById, loadUsable, range, selectRandom, sleep } from "./utils/functions.js"
 
 let rowNumber   = 1
 let tileNumber  = 0
@@ -76,10 +76,6 @@ function worthy(selected: string[], word: string[], count: number, letter: strin
     }
 
     return used + toBeUsed < realAmount
-}
-
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function submitWord(tiles: HTMLCollection) {
