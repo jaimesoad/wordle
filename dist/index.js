@@ -1,14 +1,6 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { boxPop, popTiming, shake, shakeTime, revealAns, revealTime } from "./utils/consts.js";
-import { getElementById, loadUsable, range, selectRandom } from "./utils/functions.js";
+import { wordle, worthy } from "./utils/findWord.js";
+import { getElementById, loadUsable, range, selectRandom, sleep } from "./utils/functions.js";
 let rowNumber = 1;
 let tileNumber = 0;
 let currentWord = "";
@@ -48,88 +40,62 @@ function onKeyPress(e) {
     else if (e.key == "Enter" && tileNumber == 5 && rowNumber <= 6 && !solved)
         submitWord(tiles);
 }
-function worthy(selected, word, count, letter) {
-    const writtenAmount = selected.filter(x => x === letter).length;
-    const realAmount = word.filter(x => x === letter).length;
-    let used = 0;
-    let toBeUsed = 0;
-    if (writtenAmount <= realAmount)
-        return true;
-    for (let i = 0; i < count; i++) {
-        if (selected[i] == letter) {
-            used++;
-        }
+async function submitWord(tiles) {
+    if (!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
+        activeRow.animate(shake, shakeTime);
+        return;
     }
-    for (let i = count + 1; i < 5; i++) {
-        if (selected[i] == word[i] && word[i] == letter) {
-            toBeUsed++;
-        }
-    }
-    return used + toBeUsed < realAmount;
-}
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-function submitWord(tiles) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
-            activeRow.animate(shake, shakeTime);
-            return;
-        }
-        let color = "";
-        let element;
-        rowNumber++;
-        tileNumber = 0;
-        animating = true;
-        for (let i of range(0, 5)) {
-            tiles[i].animate(revealAns, revealTime);
-            yield sleep(225);
-            element = getElementById(`btn-${currentWord[i].toLowerCase()}`);
-            if (currentWord[i] == word[i]) {
-                // Letter in place.
-                color = "#2fb52f";
-            }
-            else if (word.split("").some(obj => obj == currentWord[i]) && worthy(currentWord.split(""), word.split(""), i, currentWord[i])) {
-                // Correct letter, wrong place.
-                color = "#e8e823";
-            }
-            else {
-                // Plain wrong.
+    let color = "";
+    let element;
+    const colors = worthy(word, currentWord);
+    rowNumber++;
+    tileNumber = 0;
+    animating = true;
+    for (let i of range(0, 5)) {
+        tiles[i].animate(revealAns, revealTime);
+        await sleep(225);
+        element = getElementById(`btn-${currentWord[i].toLowerCase()}`);
+        switch (colors[i]) {
+            case wordle.grey:
                 color = "#313131";
-            }
-            tiles[i].setAttribute("style", `background: ${color}; border-color: ${color}`);
-            if (element.style.background === "" || element.style.background == "rgb(232, 232, 35)" && color == "#2fb52f") {
-                element.style.background = color;
-            }
+                break;
+            case wordle.yellow:
+                color = "#e8e823";
+                break;
+            default:
+                color = "#2fb52f";
+                break;
         }
-        if (currentWord == word) {
-            solved = true;
-            alert("You won!");
-            return;
+        tiles[i].setAttribute("style", `background: ${color}; border-color: ${color}`);
+        if (element.style.background === "" || element.style.background == "rgb(232, 232, 35)" && color == "#2fb52f") {
+            element.style.background = color;
         }
-        if (rowNumber <= 6) {
-            activeRow = getElementById(`row-${rowNumber}`);
-            usedWords.push(currentWord);
-            currentWord = "";
-        }
-        else if (!solved) {
-            alert(`You lost, the word was: ${word}`);
-        }
-        animating = false;
-    });
+    }
+    if (currentWord == word) {
+        solved = true;
+        alert("You won!");
+        return;
+    }
+    if (rowNumber <= 6) {
+        activeRow = getElementById(`row-${rowNumber}`);
+        usedWords.push(currentWord);
+        currentWord = "";
+    }
+    else if (!solved) {
+        alert(`You lost, the word was: ${word}`);
+    }
+    animating = false;
 }
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        usable = yield loadUsable();
-        word = yield selectRandom();
-        const btns = Array.from(document.getElementsByClassName("btn"));
-        const btnSrc = getElementById("btn-enter");
-        const btnDel = getElementById("btn-del");
-        btns.forEach(x => x.addEventListener("click", () => addLetter(x.innerHTML)));
-        btnSrc.addEventListener("click", () => submitWord(activeRow.children));
-        btnDel.addEventListener("click", () => delLetter());
-        addEventListener("keydown", onKeyPress);
-    });
+async function main() {
+    usable = await loadUsable();
+    word = await selectRandom();
+    const btns = Array.from(document.getElementsByClassName("btn"));
+    const btnSrc = getElementById("btn-enter");
+    const btnDel = getElementById("btn-del");
+    btns.forEach(x => x.addEventListener("click", () => addLetter(x.innerHTML)));
+    btnSrc.addEventListener("click", () => submitWord(activeRow.children));
+    btnDel.addEventListener("click", () => delLetter());
+    addEventListener("keydown", onKeyPress);
 }
 main()
     .then(() => console.log("initialized"))

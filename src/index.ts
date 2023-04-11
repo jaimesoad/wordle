@@ -1,19 +1,20 @@
 import { boxPop, popTiming, shake, shakeTime, revealAns, revealTime } from "./utils/consts.js"
+import { wordle, worthy } from "./utils/findWord.js"
 import { getElementById, loadUsable, range, selectRandom, sleep } from "./utils/functions.js"
 
-let rowNumber   = 1
-let tileNumber  = 0
+let rowNumber = 1
+let tileNumber = 0
 let currentWord = ""
-let solved      = false
-let animating   = false
-let usedWords:  string[] = []
-let activeRow   = getElementById("row-1")
-let usable:     string[] = []
-let word        = ""
+let solved = false
+let animating = false
+let usedWords: string[] = []
+let activeRow = getElementById("row-1")
+let usable: string[] = []
+let word = ""
 
 function addLetter(letter: string) {
 
-    if(solved || animating || tileNumber == 5) return
+    if (solved || animating || tileNumber == 5) return
 
     let tiles: HTMLCollection = activeRow.children
 
@@ -28,7 +29,7 @@ function addLetter(letter: string) {
 
 function delLetter() {
 
-    if(tileNumber <= 0) return
+    if (tileNumber <= 0) return
 
     let tiles = activeRow.children
 
@@ -42,10 +43,10 @@ function delLetter() {
 function onKeyPress(e: KeyboardEvent) {
     let tiles = activeRow.children
 
-    if(solved || animating)
+    if (solved || animating)
         return
-        
-    else if(e.key.length == 1 && e.key >= "a" && e.key <= "z")
+
+    else if (e.key.length == 1 && e.key >= "a" && e.key <= "z")
         addLetter(e.key.toUpperCase())
 
     else if (e.key == "Backspace" && tileNumber > 0)
@@ -55,79 +56,59 @@ function onKeyPress(e: KeyboardEvent) {
         submitWord(tiles)
 }
 
-function worthy(selected: string[], word: string[], count: number, letter: string) {
-    const writtenAmount  = selected.filter(x => x === letter).length
-    const realAmount     = word.filter(x => x === letter).length
-    let used: number     = 0
-    let toBeUsed: number = 0
-
-    if (writtenAmount <= realAmount) return true
-
-    for(let i = 0; i < count; i++){
-        if(selected[i] == letter){
-            used++
-        }
-    }
-
-    for(let i = count+1; i < 5; i++){
-        if(selected[i] == word[i] && word[i] == letter){
-            toBeUsed++
-        }
-    }
-
-    return used + toBeUsed < realAmount
-}
-
 async function submitWord(tiles: HTMLCollection) {
-    if(!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
+    if (!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
         activeRow.animate(shake, shakeTime)
         return
     }
 
     let color = ""
     let element: HTMLElement
-    
-    rowNumber ++
+    const colors = worthy(word, currentWord)
+
+    rowNumber++
     tileNumber = 0
     animating = true
 
-    for(let i of range(0, 5)) {
+    for (let i of range(0, 5)) {
         tiles[i].animate(revealAns, revealTime)
         await sleep(225)
 
         element = getElementById(`btn-${currentWord[i].toLowerCase()}`)
 
-        if(currentWord[i] == word[i]){
-            // Letter in place.
-            color = "#2fb52f"
+        switch (colors[i]) {
+            case wordle.grey:
+                color = "#313131"
+                break
 
-        } else if(word.split("").some(obj => obj == currentWord[i]) && worthy(currentWord.split(""), word.split(""), i, currentWord[i])) {
-            // Correct letter, wrong place.
-            color = "#e8e823"
+            case wordle.yellow:
+                color = "#e8e823"
+                break
 
-        } else {
-            // Plain wrong.
-            color = "#313131"
+            default:
+                color = "#2fb52f"
+                break
         }
+
         tiles[i].setAttribute("style", `background: ${color}; border-color: ${color}`)
 
-        if(element.style.background === "" || element.style.background == "rgb(232, 232, 35)" && color == "#2fb52f"){
+        if (element.style.background === "" || element.style.background == "rgb(232, 232, 35)" && color == "#2fb52f") {
             element.style.background = color
         }
     }
 
-    if(currentWord == word) {
+    if (currentWord == word) {
         solved = true
         alert("You won!")
         return
     }
 
-    if(rowNumber <= 6){
+    if (rowNumber <= 6) {
         activeRow = getElementById(`row-${rowNumber}`)
         usedWords.push(currentWord)
         currentWord = ""
 
-    } else if(!solved) {
+    } else if (!solved) {
         alert(`You lost, the word was: ${word}`)
     }
     animating = false
@@ -144,9 +125,9 @@ async function main() {
     btns.forEach(x => x.addEventListener("click", () => addLetter(x.innerHTML)))
     btnSrc.addEventListener("click", () => submitWord(activeRow.children))
     btnDel.addEventListener("click", () => delLetter())
-    
+
     addEventListener("keydown", onKeyPress)
 }
 main()
-.then(() => console.log("initialized"))
-.catch(e => console.log(e))
+    .then(() => console.log("initialized"))
+    .catch(e => console.log(e))

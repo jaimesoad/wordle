@@ -1,31 +1,16 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 export function randomNumber(len) {
     return Math.floor(Math.random() * len);
 }
-export function Get(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(path);
-        return (yield response.json());
-    });
+export async function Get(path) {
+    const response = await fetch(path);
+    return (await response.json());
 }
-export function selectRandom() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const usableJSON = yield Get("data/usable.json");
-        return usableJSON[randomNumber(usableJSON.length)];
-    });
+export async function selectRandom() {
+    const usableJSON = await Get("data/usable.json");
+    return usableJSON[randomNumber(usableJSON.length)];
 }
-export function loadUsable() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield Get("data/dict.json");
-    });
+export async function loadUsable() {
+    return await Get("data/dict.json");
 }
 export function range(first, last, options = { step: 1, inclusive: false }) {
     let out = [];
@@ -39,5 +24,8 @@ export function getElementById(id) {
     if (elem === null)
         throw ("element is null");
     return elem;
+}
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 //# sourceMappingURL=functions.js.map
