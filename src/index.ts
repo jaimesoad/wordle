@@ -58,6 +58,7 @@ function onKeyPress(e: KeyboardEvent) {
 }
 
 async function submitWord(tiles: HTMLCollection) {
+    if (solved) return
     if (!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
         activeRow.animate(shake, shakeTime)
         return
@@ -122,7 +123,7 @@ async function submitWord(tiles: HTMLCollection) {
 async function main() {
     usable = await loadUsable()
     word = await selectRandom()
-    
+
     const btns = Array.from(document.getElementsByClassName("btn"))
     const btnSrc = getElementById("btn-enter")
     const btnDel = getElementById("btn-del")

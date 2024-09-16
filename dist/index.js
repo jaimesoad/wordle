@@ -42,6 +42,8 @@ function onKeyPress(e) {
         submitWord(tiles);
 }
 async function submitWord(tiles) {
+    if (solved)
+        return;
     if (!usable.some(obj => obj == currentWord) || usedWords.some(obj => obj == currentWord)) {
         activeRow.animate(shake, shakeTime);
         return;
