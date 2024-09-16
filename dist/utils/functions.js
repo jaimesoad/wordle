@@ -1,3 +1,4 @@
+import { wordle } from './findWord.js';
 export function randomNumber(len) {
     return Math.floor(Math.random() * len);
 }
@@ -27,5 +28,8 @@ export function getElementById(id) {
 }
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+export function RowColors(input) {
+    return input.map(n => n == wordle.green ? '🟩' : n == wordle.yellow ? '🟨' : '⬜️').join('') + "\n";
 }
 //# sourceMappingURL=functions.js.map

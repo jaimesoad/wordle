@@ -1,6 +1,6 @@
 import { boxPop, popTiming, shake, shakeTime, revealAns, revealTime } from "./utils/consts.js"
 import { wordle, worthy } from "./utils/findWord.js"
-import { getElementById, loadUsable, range, selectRandom, sleep } from "./utils/functions.js"
+import { getElementById, loadUsable, range, RowColors, selectRandom, sleep } from "./utils/functions.js"
 
 let rowNumber = 1
 let tileNumber = 0
@@ -11,6 +11,7 @@ let usedWords: string[] = []
 let activeRow = getElementById("row-1")
 let usable: string[] = []
 let word = ""
+let game = ""
 
 function addLetter(letter: string) {
 
@@ -65,6 +66,7 @@ async function submitWord(tiles: HTMLCollection) {
     let color = ""
     let element: HTMLElement
     const colors = worthy(word, currentWord)
+    game += RowColors(colors)
 
     rowNumber++
     tileNumber = 0
@@ -99,7 +101,9 @@ async function submitWord(tiles: HTMLCollection) {
 
     if (currentWord == word) {
         solved = true
-        alert("You won!")
+
+        await sleep(100)
+        alert("You won!\n" + game)
         return
     }
 
@@ -109,6 +113,7 @@ async function submitWord(tiles: HTMLCollection) {
         currentWord = ""
 
     } else if (!solved) {
+        await sleep(100)
         alert(`You lost, the word was: ${word}`)
     }
     animating = false
@@ -117,7 +122,7 @@ async function submitWord(tiles: HTMLCollection) {
 async function main() {
     usable = await loadUsable()
     word = await selectRandom()
-
+    
     const btns = Array.from(document.getElementsByClassName("btn"))
     const btnSrc = getElementById("btn-enter")
     const btnDel = getElementById("btn-del")

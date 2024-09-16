@@ -1,3 +1,5 @@
+import { wordle } from './findWord.js'
+
 export function randomNumber(len: number) {
     return Math.floor(Math.random() * len)
 }
@@ -42,4 +44,8 @@ export function getElementById(id: string) {
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function RowColors(input: number[]): string {
+    return input.map(n => n == wordle.green ? '🟩' : n == wordle.yellow ? '🟨' : '⬜️').join('') + "\n"
 }

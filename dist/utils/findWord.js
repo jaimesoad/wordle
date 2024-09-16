@@ -8,7 +8,7 @@ export function worthy(word, written) {
     let out = [];
     for (let i = 0; i < word.length; i++) {
         const idx = word.indexOf(written[i]);
-        if (idx === i) {
+        if (word[i] === written[i]) {
             out.push(i);
             word = word.replace(written[i], '0');
         }

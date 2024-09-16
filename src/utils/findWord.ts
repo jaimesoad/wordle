@@ -10,7 +10,7 @@ export function worthy(word: string, written: string) {
     for (let i = 0; i < word.length; i++) {
         const idx = word.indexOf(written[i])
 
-        if (idx === i) {
+        if (word[i] === written[i]) {
             out.push(i)
             word = word.replace(written[i], '0')
 
