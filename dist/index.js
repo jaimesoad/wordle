@@ -93,7 +93,6 @@ async function submitWord(tiles) {
 async function main() {
     usable = await loadUsable();
     word = await selectRandom();
-    word = "CROSS";
     const btns = Array.from(document.getElementsByClassName("btn"));
     const btnSrc = getElementById("btn-enter");
     const btnDel = getElementById("btn-del");
